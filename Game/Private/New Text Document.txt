@@ -1,0 +1,53 @@
+#include "COGMeteoriteController.h"
+
+COGMeteoriteController::COGMeteoriteController(GameObject * pGO)
+	:Component(pGO)
+{
+}
+
+void COGMeteoriteController::Initialize()
+{
+	AddToComponentVector(mMeteoriteController);
+	mTransfrom = mGO->FindComponent<COGTransform>(ComponentType::Transform);
+	mLineShape = mGO->FindComponent<COGLineShape>(ComponentType::LineShape);
+	mPhysics = mGO->FindComponent<COGPhysics>(ComponentType::Physics);
+	mPhysics->mVelocity.x = 0;
+	mPhysics->mVelocity.y = 0;
+
+}
+
+void COGMeteoriteController::Destroy()
+{
+}
+
+void COGMeteoriteController::SpawnMissle()
+{	
+	Direction();
+}
+
+Vector2 COGMeteoriteController::Direction()
+{
+	Vector2 heading;
+	Vector2 finalPos;
+	Vector2 initPos;
+	initPos.x = 400;
+	initPos.y = 0;
+	int rndX = (rand() % 80) + 0;
+	finalPos.x = rndX;
+	finalPos.y = 600;
+	heading.x = initPos.x - finalPos.x;
+	heading.y = initPos.y - finalPos.y;
+	heading.Normalize();
+	mPhysics->mVelocity.x = heading.x * 50;
+	mPhysics->mVelocity.y = heading.y * 50;
+	mLineShape->Update(initPos, finalPos); 
+
+
+	return heading;
+}
+
+ComponentType COGMeteoriteController::GetType() const
+{
+	return ComponentType::MeteoriteController;
+}
+std::vector<COGMeteoriteController*> COGMeteoriteController::mMeteoriteController;
